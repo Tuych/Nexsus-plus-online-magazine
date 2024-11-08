@@ -1,0 +1,179 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+<div id="hero-area">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 col-lg-9 col-xs-12 text-center">
+                <div class="contents">
+                    <h1 class="head-title">Welcome to The Largest <span class="year">Marketplace</span></h1>
+                    <p>Buy and sell everything from used cars to mobile phones and computers, or search for
+                        property, jobs and more</p>
+                    <div class="search-bar">
+                        <div class="search-inner">
+                            <form class="search-form" method="get" action="products">
+                                <div class="form-group">
+                                    <input type="text" name="customword" class="form-control"
+                                           placeholder="What are you looking for?">
+                                </div>
+                                <div class="form-group inputwithicon">
+                                    <div class="select">
+                                        <select name="city">
+                                            <option value="none" selected>Location</option>
+                                            {% for city in cities %}
+                                                <option value="{{ city.id }}" >{{ city.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <i class="lni-target"></i>
+                                </div>
+                                <div class="form-group inputwithicon">
+                                    <div class="select">
+                                        <select name="category">
+                                            <option value="none">Select Category</option>
+                                            {% for category in categories %}
+                                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <i class="lni-menu"></i>
+                                </div>
+                                <button class="btn btn-common" type="submit"><i class="lni-search"></i> Search
+                                    Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</header>
+
+
+<section id="categories">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12 col-xs-12">
+                <div id="categories-icon-slider" class="categories-wrapper owl-carousel owl-theme">
+                    {% for category in categories %}
+                        <div class="item">
+                            <a href="#">
+                                <div class="category-icon-item">
+                                    <div class="icon-box">
+                                        <div class="icon">
+                                            {% if category.image %}
+                                                <img src="{{ category.image.url }}" alt="images">
+                                            {% else %}
+                                                <img src="{% static 'assets/img/default_category2.jpg' %}" width="51 px" height="54 px" alt="images">
+                                            {% endif %}
+                                        </div>
+                                        <h4>{{ category.name }}</h4>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="featured section-padding">
+    <div class="container">
+        <h1 class="section-title">Latest Products</h1>
+        <div class="row">
+            {% for product in products %}
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-4">
+                    <div class="featured-box">
+                        <figure>
+                            {% if product.discount %}
+                                <span class="price-save">
+                                    {{ product.discount }}% Save
+                                </span>
+                            {% endif %}
+                            <div class="icon">
+                                <span class="bg-green"><i class="lni-heart"></i></span>
+                                <span><i class="lni-bookmark"></i></span>
+                            </div>
+                            {% for img in product.productimage_set.all %}
+                            <a href="{% url 'product-detail' product.id %}"><img class="img-fluid" src="{{ img.image.url }}" alt=""></a>
+                            {% endfor %}
+                        </figure>
+                        <div class="feature-content">
+                            <div class="product">
+                                {% if product.category.parent %}
+                                  <a href="#">{{ product.category.name }} > </a>
+                                  <a href="#">{{ product.category.parent }}</a>
+                                {% else %}
+                                  <a href="#">{{ product.category.name }} </a>
+                                {% endif %}
+
+                            </div>
+                            <h4><a href="ads-details.html">{{ product.title }} ...</a></h4>
+                            <div class="meta-tag">
+                                    <span>
+                                        <a href="#"><i class="lni-user"></i>{{ product.user.firstname }}</a>
+                                    </span>
+                                <span>
+                                        <a href="#"><i class="lni-map-marker"></i>{{ product.city.name }}</a>
+                                    </span>
+                            </div>
+                            <p class="dsc">{{ product.description|truncatechars:120 }}</p>
+                            <div class="listing-bottom">
+                                <h3 class="price float-left">${{ product.price }}</h3>
+                                <a href="{% url 'product-detail' product.id %}" class="btn btn-common float-right">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="blog" class="section-padding">
+
+    <div class="container">
+        <h2 class="section-title">
+            Blog Post
+        </h2>
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-lg-4 col-md-6 col-xs-12 blog-item">
+
+                <div class="blog-item-wrapper">
+                    <div class="blog-item-img">
+                        <a href="{% url 'blog-detail' post.id %}">
+                            <img src="{{ post.image.url }}" alt="">
+                        </a>
+                    </div>
+                    <div class="blog-item-text">
+                        <div class="meta-tags">
+                                <span class="user float-left"><a href="#"><i class="lni-user"></i>
+                                        {{ post.author.firstname }} {{ post.author.lastname }}</a></span>
+                            <span class="date float-right"><i class="lni-calendar"></i>{{ post.post_date }}</span>
+                        </div>
+                        <h3>
+                            <a href="{% url 'blog-detail' post.id %}">{{ post.title }}</a>
+                        </h3>
+                        <p>{{ post.content|truncatechars:110}}</p>
+                        <a href="{% url 'blog-detail' post.id %}" class="btn btn-common">Read More</a>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock content %}
